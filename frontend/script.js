@@ -1,6 +1,42 @@
 const API_URL = "http://localhost:5000/api";
 const BACKEND_URL = "http://localhost:5000";
 
+let allPosts = [];
+
+/* ---------- Notifications ---------- */
+
+function showNotification(message) {
+  const div = document.createElement("div");
+  div.className = "toast";
+  div.innerText = message;
+
+  document.body.appendChild(div);
+
+  setTimeout(() => {
+    div.remove();
+  }, 3000);
+}
+
+/* ---------- Dark Mode ---------- */
+
+function toggleDarkMode() {
+  document.body.classList.toggle("dark-mode");
+
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("darkMode", "enabled");
+  } else {
+    localStorage.setItem("darkMode", "disabled");
+  }
+}
+
+function loadDarkMode() {
+  if (localStorage.getItem("darkMode") === "enabled") {
+    document.body.classList.add("dark-mode");
+  }
+}
+
+/* ---------- Auth ---------- */
+
 async function registerUser() {
   const name = document.getElementById("registerName")?.value;
   const email = document.getElementById("registerEmail")?.value;
@@ -8,14 +44,18 @@ async function registerUser() {
 
   const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ name, email, password }),
   });
 
   const data = await res.json();
-  alert(data.message);
+  showNotification(data.message);
 
-  if (res.ok) window.location.href = "login.html";
+  if (res.ok) {
+    window.location.href = "login.html";
+  }
 }
 
 async function loginUser() {
@@ -24,7 +64,9 @@ async function loginUser() {
 
   const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({ email, password }),
   });
 
@@ -34,13 +76,17 @@ async function loginUser() {
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
 
-    if (data.user.role === "admin") {
-      window.location.href = "admin.html";
-    } else {
-      window.location.href = "dashboard.html";
-    }
+    showNotification("Login successful");
+
+    setTimeout(() => {
+      if (data.user.role === "admin") {
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "dashboard.html";
+      }
+    }, 800);
   } else {
-    alert(data.message);
+    showNotification(data.message);
   }
 }
 
@@ -50,6 +96,8 @@ function logoutUser() {
   window.location.href = "login.html";
 }
 
+/* ---------- Create Blog ---------- */
+
 async function createPost() {
   const title = document.getElementById("postTitle")?.value;
   const content = document.getElementById("postContent")?.value;
@@ -57,7 +105,7 @@ async function createPost() {
   const token = localStorage.getItem("token");
 
   if (!title || !content) {
-    alert("Title and content are required");
+    showNotification("Title and content are required");
     return;
   }
 
@@ -80,12 +128,17 @@ async function createPost() {
   const data = await res.json();
 
   if (res.ok) {
-    alert("Blog published successfully");
-    window.location.href = "dashboard.html";
+    showNotification("Blog published successfully");
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 800);
   } else {
-    alert(data.message);
+    showNotification(data.message);
   }
 }
+
+/* ---------- Load Blogs ---------- */
 
 async function loadPosts() {
   const container = document.getElementById("postsContainer");
@@ -93,6 +146,15 @@ async function loadPosts() {
 
   const res = await fetch(`${API_URL}/posts`);
   const posts = await res.json();
+
+  allPosts = posts;
+
+  renderPosts(posts);
+}
+
+function renderPosts(posts) {
+  const container = document.getElementById("postsContainer");
+  if (!container) return;
 
   container.innerHTML = "";
 
@@ -150,6 +212,7 @@ async function loadPosts() {
 
     div.innerHTML = `
       <h3 id="title-${post._id}">${post.title}</h3>
+
       ${mediaHTML}
 
       <p id="content-${post._id}">${post.content}</p>
@@ -166,8 +229,13 @@ async function loadPosts() {
 
       <br><br>
 
-      <button onclick="enableEdit('${post._id}')">Edit</button>
-      <button onclick="deletePost('${post._id}')">Delete</button>
+      <button onclick="enableEdit('${post._id}')">
+        Edit
+      </button>
+
+      <button onclick="deletePost('${post._id}')">
+        Delete
+      </button>
 
       <button onclick="toggleComments('${post._id}')">
         💬 Comments (${post.comments?.length || 0})
@@ -201,6 +269,29 @@ async function loadPosts() {
   });
 }
 
+/* ---------- Search Blogs ---------- */
+
+function searchBlogs() {
+  const searchValue =
+    document.getElementById("searchInput")?.value.toLowerCase() || "";
+
+  const filteredPosts = allPosts.filter((post) => {
+    const title = post.title?.toLowerCase() || "";
+    const content = post.content?.toLowerCase() || "";
+    const author = post.author?.name?.toLowerCase() || "";
+
+    return (
+      title.includes(searchValue) ||
+      content.includes(searchValue) ||
+      author.includes(searchValue)
+    );
+  });
+
+  renderPosts(filteredPosts);
+}
+
+/* ---------- Comments ---------- */
+
 function toggleComments(postId) {
   const section = document.getElementById(`commentsSection-${postId}`);
 
@@ -220,7 +311,7 @@ async function addComment(postId) {
   const token = localStorage.getItem("token");
 
   if (!text) {
-    alert("Comment cannot be empty");
+    showNotification("Comment cannot be empty");
     return;
   }
 
@@ -237,11 +328,14 @@ async function addComment(postId) {
 
   if (res.ok) {
     input.value = "";
+    showNotification("Comment added");
     loadPosts();
   } else {
-    alert(data.message);
+    showNotification(data.message);
   }
 }
+
+/* ---------- Edit Blog ---------- */
 
 function enableEdit(id) {
   const titleEl = document.getElementById(`title-${id}`);
@@ -253,10 +347,18 @@ function enableEdit(id) {
 
   card.innerHTML = `
     <input id="editTitle-${id}" value="${oldTitle}">
-    <textarea id="editContent-${id}" rows="5">${oldContent}</textarea>
 
-    <button onclick="saveEdit('${id}')">Save</button>
-    <button onclick="loadPosts()">Cancel</button>
+    <textarea id="editContent-${id}" rows="5">
+${oldContent}
+    </textarea>
+
+    <button onclick="saveEdit('${id}')">
+      Save
+    </button>
+
+    <button onclick="loadPosts()">
+      Cancel
+    </button>
   `;
 }
 
@@ -266,7 +368,7 @@ async function saveEdit(id) {
   const token = localStorage.getItem("token");
 
   if (!title || !content) {
-    alert("Title and content are required");
+    showNotification("Title and content are required");
     return;
   }
 
@@ -282,12 +384,14 @@ async function saveEdit(id) {
   const data = await res.json();
 
   if (res.ok) {
-    alert("Post updated successfully");
+    showNotification("Post updated successfully");
     loadPosts();
   } else {
-    alert(data.message);
+    showNotification(data.message);
   }
 }
+
+/* ---------- Delete Blog ---------- */
 
 async function deletePost(id) {
   const confirmDelete = confirm("Are you sure you want to delete this post?");
@@ -297,14 +401,22 @@ async function deletePost(id) {
 
   const res = await fetch(`${API_URL}/posts/${id}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await res.json();
-  alert(data.message);
 
-  if (res.ok) loadPosts();
+  if (res.ok) {
+    showNotification(data.message);
+    loadPosts();
+  } else {
+    showNotification(data.message);
+  }
 }
+
+/* ---------- Password Reset ---------- */
 
 async function forgotPassword() {
   const email = document.getElementById("forgotEmail")?.value;
@@ -318,7 +430,7 @@ async function forgotPassword() {
   });
 
   const data = await res.json();
-  alert(data.message);
+  showNotification(data.message);
 }
 
 async function resetPassword() {
@@ -326,7 +438,7 @@ async function resetPassword() {
   const confirmPassword = document.getElementById("confirmPassword")?.value;
 
   if (newPassword !== confirmPassword) {
-    alert("Passwords do not match");
+    showNotification("Passwords do not match");
     return;
   }
 
@@ -342,10 +454,17 @@ async function resetPassword() {
   });
 
   const data = await res.json();
-  alert(data.message);
 
-  if (res.ok) window.location.href = "login.html";
+  showNotification(data.message);
+
+  if (res.ok) {
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 800);
+  }
 }
+
+/* ---------- Admin ---------- */
 
 async function loadAdminData() {
   const statsBox = document.getElementById("adminStats");
@@ -356,25 +475,41 @@ async function loadAdminData() {
   const token = localStorage.getItem("token");
 
   const statsRes = await fetch(`${API_URL}/admin/stats`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const stats = await statsRes.json();
 
   if (!statsRes.ok) {
-    alert(stats.message);
-    window.location.href = "login.html";
+    showNotification(stats.message);
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 800);
+
     return;
   }
 
   statsBox.innerHTML = `
-    <div class="card">👥 Total Users: ${stats.totalUsers}</div>
-    <div class="card">📝 Total Blogs: ${stats.totalPosts}</div>
-    <div class="card">💬 Total Comments: ${stats.totalComments}</div>
+    <div class="card">
+      👥 Total Users: ${stats.totalUsers}
+    </div>
+
+    <div class="card">
+      📝 Total Blogs: ${stats.totalPosts}
+    </div>
+
+    <div class="card">
+      💬 Total Comments: ${stats.totalComments}
+    </div>
   `;
 
   const usersRes = await fetch(`${API_URL}/admin/users`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const users = await usersRes.json();
@@ -387,9 +522,15 @@ async function loadAdminData() {
 
     div.innerHTML = `
       <h3>${user.name}</h3>
+
       <p>${user.email}</p>
+
       <p>Role: ${user.role}</p>
-      <p>Status: ${user.isBlocked ? "Blocked" : "Active"}</p>
+
+      <p>
+        Status: ${user.isBlocked ? "Blocked" : "Active"}
+      </p>
+
       <button onclick="toggleBlockUser('${user._id}')">
         ${user.isBlocked ? "Unblock" : "Block"}
       </button>
@@ -404,14 +545,21 @@ async function toggleBlockUser(id) {
 
   const res = await fetch(`${API_URL}/admin/users/${id}/block`, {
     method: "PUT",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await res.json();
-  alert(data.message);
 
-  if (res.ok) loadAdminData();
+  showNotification(data.message);
+
+  if (res.ok) {
+    loadAdminData();
+  }
 }
+
+/* ---------- Helpers ---------- */
 
 function togglePassword(id, button) {
   const input = document.getElementById(id);
@@ -439,5 +587,8 @@ function submitOnEnter(event, callback) {
   }
 }
 
+/* ---------- Initial Load ---------- */
+
+loadDarkMode();
 loadPosts();
 loadAdminData();

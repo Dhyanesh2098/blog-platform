@@ -1,32 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>Dashboard | BlogVerse</title>
-  <link rel="stylesheet" href="style.css">
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
 </head>
+
 <body>
 
-  <header>
-    <h1>BlogVerse Dashboard ✨</h1>
+<header>
 
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="post.html">Create Post</a>
-      <button onclick="logoutUser()">Logout</button>
-    </nav>
-  </header>
+  <h1>BlogVerse Dashboard ✨</h1>
 
-  <section class="dashboard">
-    <h2>Your Creative Space</h2>
-    <p class="dash-subtitle">Manage your blogs, share ideas, and inspire readers.</p>
+  <nav>
 
-    <div id="postsContainer">
-      <p>No blog posts available.</p>
-    </div>
-  </section>
+    <a href="index.html">
 
-  <script src="script.js"></script>
+      Home
+
+    </a>
+
+    <a href="post.html">
+
+      Create Post
+
+    </a>
+
+    <button onclick="logoutUser()">
+
+      Logout
+
+    </button>
+
+  </nav>
+
+</header>
+
+<section class="dashboard">
+
+  <h2>Your Creative Space</h2>
+
+  <p class="dash-subtitle">
+
+    Manage your blogs, share ideas, and inspire readers.
+
+  </p>
+
+  <!-- New Toolbar -->
+
+  <div class="dashboard-tools">
+
+    <input
+
+      type="text"
+
+      id="searchInput"
+
+      placeholder="🔍 Search blogs..."
+
+      oninput="searchBlogs()"
+
+    >
+
+    <button onclick="toggleDarkMode()">
+
+      🌓 Dark Mode
+
+    </button>
+
+  </div>
+
+  <div id="postsContainer">
+
+    <p>No blog posts available.</p>
+
+  </div>
+
+</section>
+
+<script src="script.js"></script>
+
 </body>
+
 </html>
