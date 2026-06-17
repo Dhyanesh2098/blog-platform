@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://blog-platform-agbu.onrender.com/api";
 const BACKEND_URL = "http://localhost:5000";
 
 let allPosts = [];
