@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Create Post | BlogVerse</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body class="auth-page">
+
+  <div class="auth-card">
+
+    <h1>✍️ Create Your Blog</h1>
+
+    <p class="auth-subtitle">
+
+      Turn your thoughts, experiences and ideas into inspiring stories.
+
+    </p>
+
+    <input
+
+      type="text"
+
+      id="postTitle"
+
+      placeholder="Enter blog title"
+
+      onkeydown="moveNext(event,'postContent')"
+
+    >
+
+    <textarea
+
+      id="postContent"
+
+      rows="7"
+
+      placeholder="Write your blog here..."
+
+      onkeydown="submitOnEnter(event,createPost)"
+
+    ></textarea>
+
+    <button
+
+      class="auth-btn"
+
+      onclick="createPost()"
+
+    >
+
+      🚀 Publish Blog
+
+    </button>
+
+    <p>
+
+      <a href="dashboard.html">
+
+        ← Back to Dashboard
+
+      </a>
+
+    </p>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>

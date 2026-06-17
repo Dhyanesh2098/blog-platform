@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | BlogVerse</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>Admin Dashboard 👨‍💼</h1>
+
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">User Dashboard</a>
+      <button onclick="logoutUser()">Logout</button>
+    </nav>
+  </header>
+
+  <section class="dashboard">
+    <h2>BlogVerse Control Panel</h2>
+    <p class="dash-subtitle">Manage users, posts, comments and platform safety.</p>
+
+    <div class="admin-stats" id="adminStats"></div>
+
+    <h2>All Users</h2>
+    <div id="adminUsers"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
