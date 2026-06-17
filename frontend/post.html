@@ -1,83 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Create Post | BlogVerse</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Blog | BlogVerse</title>
   <link rel="stylesheet" href="style.css">
-
 </head>
+<body>
 
-<body class="auth-page">
+  <header>
+    <h1>Create Blog ✍️</h1>
 
-  <div class="auth-card">
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <button onclick="logoutUser()">Logout</button>
+    </nav>
+  </header>
 
-    <h1>✍️ Create Your Blog</h1>
+  <section class="auth-container">
+    <div class="form-box">
+      <h2>Share Your Story</h2>
+      <p class="dash-subtitle">Write meaningful blogs and optionally add an image or video.</p>
 
-    <p class="auth-subtitle">
+      <input
+        type="text"
+        id="postTitle"
+        placeholder="Blog title"
+      >
 
-      Turn your thoughts, experiences and ideas into inspiring stories.
+      <textarea
+        id="postContent"
+        rows="7"
+        placeholder="Write your blog content..."
+      ></textarea>
 
-    </p>
+      <label class="file-label">Optional Media</label>
+      <input
+        type="file"
+        id="postMedia"
+        accept="image/*,video/*"
+      >
 
-    <input
+      <div class="guidelines-box">
+        <h3>📜 BlogVerse Guidelines</h3>
+        <p>✅ Be respectful</p>
+        <p>✅ Share original content</p>
+        <p>✅ No adult or harmful content</p>
+        <p>✅ No abusive language</p>
+        <p>✅ Respect privacy</p>
+      </div>
 
-      type="text"
-
-      id="postTitle"
-
-      placeholder="Enter blog title"
-
-      onkeydown="moveNext(event,'postContent')"
-
-    >
-
-    <textarea
-
-      id="postContent"
-
-      rows="7"
-
-      placeholder="Write your blog here..."
-
-      onkeydown="submitOnEnter(event,createPost)"
-
-    ></textarea>
-
-    <button
-
-      class="auth-btn"
-
-      onclick="createPost()"
-
-    >
-
-      🚀 Publish Blog
-
-    </button>
-
-    <p>
-
-      <a href="dashboard.html">
-
-        ← Back to Dashboard
-
-      </a>
-
-    </p>
-
-  </div>
+      <button onclick="createPost()">Publish Blog</button>
+    </div>
+  </section>
 
   <script src="script.js"></script>
-
 </body>
-
 </html>
