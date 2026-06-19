@@ -1,5 +1,5 @@
 const API_URL = "https://blog-platform-agbu.onrender.com/api";
-const BACKEND_URL = "http://localhost:5000";
+const BACKEND_URL = "https://blog-platform-agbu.onrender.com";
 
 let allPosts = [];
 
@@ -15,6 +15,17 @@ function showNotification(message) {
   setTimeout(() => {
     div.remove();
   }, 3000);
+}
+
+/* ---------- Logged In User ---------- */
+
+function showLoggedInUser() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const welcome = document.getElementById("welcomeUser");
+
+  if (user && welcome) {
+    welcome.innerHTML = `👋 Welcome back, ${user.name}`;
+  }
 }
 
 /* ---------- Dark Mode ---------- */
@@ -44,9 +55,7 @@ async function registerUser() {
 
   const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ name, email, password }),
   });
 
@@ -64,9 +73,7 @@ async function loginUser() {
 
   const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
 
@@ -84,7 +91,7 @@ async function loginUser() {
       } else {
         window.location.href = "dashboard.html";
       }
-    }, 800);
+    }, 700);
   } else {
     showNotification(data.message);
   }
@@ -132,7 +139,7 @@ async function createPost() {
 
     setTimeout(() => {
       window.location.href = "dashboard.html";
-    }, 800);
+    }, 700);
   } else {
     showNotification(data.message);
   }
@@ -148,7 +155,6 @@ async function loadPosts() {
   const posts = await res.json();
 
   allPosts = posts;
-
   renderPosts(posts);
 }
 
@@ -196,9 +202,7 @@ function renderPosts(posts) {
               <div>
                 <span>${comment.text}</span>
                 <br>
-                <small>
-                  ${new Date(comment.createdAt).toLocaleString()}
-                </small>
+                <small>${new Date(comment.createdAt).toLocaleString()}</small>
               </div>
             </div>
           `
@@ -217,25 +221,14 @@ function renderPosts(posts) {
 
       <p id="content-${post._id}">${post.content}</p>
 
-      <small>
-        Author: ${post.author?.name || "Unknown"}
-      </small>
-
+      <small>Author: ${post.author?.name || "Unknown"}</small>
       <br>
-
-      <small>
-        📅 ${new Date(post.createdAt).toLocaleString()}
-      </small>
+      <small>📅 ${new Date(post.createdAt).toLocaleString()}</small>
 
       <br><br>
 
-      <button onclick="enableEdit('${post._id}')">
-        Edit
-      </button>
-
-      <button onclick="deletePost('${post._id}')">
-        Delete
-      </button>
+      <button onclick="enableEdit('${post._id}')">Edit</button>
+      <button onclick="deletePost('${post._id}')">Delete</button>
 
       <button onclick="toggleComments('${post._id}')">
         💬 Comments (${post.comments?.length || 0})
@@ -271,7 +264,7 @@ function renderPosts(posts) {
 
 /* ---------- Search Blogs ---------- */
 
-function searchBlogs() {
+function searchPosts() {
   const searchValue =
     document.getElementById("searchInput")?.value.toLowerCase() || "";
 
@@ -288,6 +281,10 @@ function searchBlogs() {
   });
 
   renderPosts(filteredPosts);
+}
+
+function searchBlogs() {
+  searchPosts();
 }
 
 /* ---------- Comments ---------- */
@@ -347,18 +344,10 @@ function enableEdit(id) {
 
   card.innerHTML = `
     <input id="editTitle-${id}" value="${oldTitle}">
+    <textarea id="editContent-${id}" rows="5">${oldContent}</textarea>
 
-    <textarea id="editContent-${id}" rows="5">
-${oldContent}
-    </textarea>
-
-    <button onclick="saveEdit('${id}')">
-      Save
-    </button>
-
-    <button onclick="loadPosts()">
-      Cancel
-    </button>
+    <button onclick="saveEdit('${id}')">Save</button>
+    <button onclick="loadPosts()">Cancel</button>
   `;
 }
 
@@ -454,13 +443,12 @@ async function resetPassword() {
   });
 
   const data = await res.json();
-
   showNotification(data.message);
 
   if (res.ok) {
     setTimeout(() => {
       window.location.href = "login.html";
-    }, 800);
+    }, 700);
   }
 }
 
@@ -487,23 +475,15 @@ async function loadAdminData() {
 
     setTimeout(() => {
       window.location.href = "login.html";
-    }, 800);
+    }, 700);
 
     return;
   }
 
   statsBox.innerHTML = `
-    <div class="card">
-      👥 Total Users: ${stats.totalUsers}
-    </div>
-
-    <div class="card">
-      📝 Total Blogs: ${stats.totalPosts}
-    </div>
-
-    <div class="card">
-      💬 Total Comments: ${stats.totalComments}
-    </div>
+    <div class="card">👥 Total Users: ${stats.totalUsers}</div>
+    <div class="card">📝 Total Blogs: ${stats.totalPosts}</div>
+    <div class="card">💬 Total Comments: ${stats.totalComments}</div>
   `;
 
   const usersRes = await fetch(`${API_URL}/admin/users`, {
@@ -522,14 +502,9 @@ async function loadAdminData() {
 
     div.innerHTML = `
       <h3>${user.name}</h3>
-
       <p>${user.email}</p>
-
       <p>Role: ${user.role}</p>
-
-      <p>
-        Status: ${user.isBlocked ? "Blocked" : "Active"}
-      </p>
+      <p>Status: ${user.isBlocked ? "Blocked" : "Active"}</p>
 
       <button onclick="toggleBlockUser('${user._id}')">
         ${user.isBlocked ? "Unblock" : "Block"}
@@ -551,7 +526,6 @@ async function toggleBlockUser(id) {
   });
 
   const data = await res.json();
-
   showNotification(data.message);
 
   if (res.ok) {
@@ -592,3 +566,4 @@ function submitOnEnter(event, callback) {
 loadDarkMode();
 loadPosts();
 loadAdminData();
+showLoggedInUser();

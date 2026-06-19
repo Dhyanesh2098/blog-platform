@@ -1,21 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
   <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Dashboard | BlogVerse</title>
 
-  <link
-    rel="stylesheet"
-    href="style.css"
-  >
+  <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -27,23 +20,11 @@
 
   <nav>
 
-    <a href="index.html">
+    <a href="index.html">Home</a>
 
-      Home
+    <a href="post.html">Create Post</a>
 
-    </a>
-
-    <a href="post.html">
-
-      Create Post
-
-    </a>
-
-    <button onclick="logoutUser()">
-
-      Logout
-
-    </button>
+    <button onclick="logoutUser()">Logout</button>
 
   </nav>
 
@@ -51,7 +32,7 @@
 
 <section class="dashboard">
 
-  <h2>Your Creative Space</h2>
+  <h2 id="welcomeUser">👋 Welcome</h2>
 
   <p class="dash-subtitle">
 
@@ -59,26 +40,17 @@
 
   </p>
 
-  <!-- New Toolbar -->
-
   <div class="dashboard-tools">
 
     <input
-
       type="text"
-
       id="searchInput"
-
       placeholder="🔍 Search blogs..."
-
-      oninput="searchBlogs()"
-
+      onkeyup="searchPosts()"
     >
 
     <button onclick="toggleDarkMode()">
-
       🌓 Dark Mode
-
     </button>
 
   </div>
@@ -90,6 +62,8 @@
   </div>
 
 </section>
+
+<div id="toastContainer"></div>
 
 <script src="script.js"></script>
 
